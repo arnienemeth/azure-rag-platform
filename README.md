@@ -15,19 +15,20 @@ An Event-Driven **Retrieval-Augmented Generation (RAG)** platform built on Micro
 
 The solution uses a **Hub-and-Spoke** event-driven pattern to ensure scalability and cost-efficiency.
 
-```mermaid
-graph LR
-    User[User] -- Upload PDF --> FE[Streamlit Frontend]
-    FE -- Store Blob --> Storage[Azure Blob Storage]
-    Storage -- Event Trigger --> Func[Azure Function (Python)]
-    Func -- 1. Extract Text --> LangChain[LangChain Splitter]
-    LangChain -- 2. Generate Vectors --> Embed[HuggingFace Model]
-    Embed -- 3. Index Data --> Search[Azure AI Search]
-    User -- Ask Question --> FE
-    FE -- Query Vector Index --> Search
-    Search -- Return Context --> FE
-
-```
+graph TD
+    Client((User / Browser))
+    Streamlit["Frontend (Streamlit)"]
+    Storage[("Azure Blob Storage")]
+    Func["Azure Function (Python)"]
+    Search[("Azure AI Search")]
+    
+    Client -- "Uploads PDF" --> Streamlit
+    Streamlit -- "Saves to Blob" --> Storage
+    Storage -- "Blob Trigger" --> Func
+    Func -- "Extracts & Embeds" --> Func
+    Func -- "Uploads Vectors" --> Search
+    
+    linkStyle 3 stroke-width:2px,fill:none,stroke:red;
 
 ### 🔄 Data Flow
 
